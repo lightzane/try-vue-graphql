@@ -90,17 +90,71 @@ module.exports = {
     service: {
       name: 'my-app',
       // URL to the GraphQL API
-      url: 'http://localhost:3000/graphql',
+      url: 'http://localhost:4000/graphql',
     },
     // Files processed by the extension
     includes: [
-      'src/**/*.vue',
-      'src/**/*.js',
-      'src/**/*.ts',
+      // 'src/**/*.vue',
+      // 'src/**/*.js',
+      // 'src/**/*.ts', // ! merging different files might cause the extension to explode!
+      'src/**/*.graphql',
     ],
   },
 }
 ```
+
+### Rollup Plugin for Graphql
+
+Convert `.gql`/`.graphql` files to ES6 modules, so we can import and use them inside our vue components.
+
+See example: [EditRating.vue](./src/components/EditRating.vue#L2)
+
+```bash
+npm i -D @rollup/plugin-graphql
+```
+
+#### Update Vite Config
+
+```diff
+ import { fileURLToPath, URL } from 'node:url'
+
+ import { defineConfig } from 'vite'
+ import vue from '@vitejs/plugin-vue'
+ import vueDevTools from 'vite-plugin-vue-devtools'
++import graphql from '@rollup/plugin-graphql'
+
+ // https://vite.dev/config/
+ export default defineConfig({
+   plugins: [
+     vue(),
+     vueDevTools(),
++    graphql(), // Convert .gql/.graphql files to ES6 modules
+   ],
+   resolve: {
+     alias: {
+       '@': fileURLToPath(new URL('./src', import.meta.url))
+     },
+   },
+ })
+```
+
+#### Fix Typescript Errors
+
+Importing `.graphql` files to Vue components might cause **"Cannot find module"** typescript errors.
+
+We fix this like so:
+
+See [`env.d.ts`](./env.d.ts#L4)
+
+```ts
+// This should fix any "Cannot find module" (ts) error when you import .graphql files
+declare module '*.graphql' {
+  import { DocumentNode } from 'graphql';
+  const value: DocumentNode;
+  export default value;
+}
+```
+
 ## How this project is created
 
 `npm create vue`

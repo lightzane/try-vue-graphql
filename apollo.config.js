@@ -8,9 +8,10 @@ export default {
     },
     // Files processed by the extension
     includes: [
-      'src/**/*.vue',
-      'src/**/*.js',
-      'src/**/*.ts',
+      // 'src/**/*.vue',
+      // 'src/**/*.js',
+      // 'src/**/*.ts', // ! merging different files might cause the extension to explode!
+      'src/**/*.graphql',
     ],
   },
 };

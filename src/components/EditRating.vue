@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UPDATE_RATING_MUTATION } from '@/graphql';
+import UPDATE_RATING_MUTATION from '@/graphql/UpdateRating.mutation.graphql';
 import { useMutation } from '@vue/apollo-composable';
 import { ref } from 'vue';
 

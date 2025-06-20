@@ -18,6 +18,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@rollup/plugin-graphql": "^2.0.5",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-vue": "^5.2.3",

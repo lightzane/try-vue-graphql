@@ -1,4 +1,3 @@
-import { ALL_BOOKS_QUERY } from '@/graphql';
 import {
   ApolloClient,
   createHttpLink,

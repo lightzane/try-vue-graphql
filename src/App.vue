@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EditRating from '@/components/EditRating.vue';
-import { ALL_BOOKS_QUERY } from '@/graphql';
+import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
 import { useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
 
