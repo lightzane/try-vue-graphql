@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ALL_BOOKS_QUERY } from '@/graphql';
 import { useQuery } from '@vue/apollo-composable';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 interface Book {
   id: string;

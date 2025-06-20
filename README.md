@@ -74,6 +74,33 @@ See also **useQuery()**: https://apollo.vuejs.org/guide-composable/query.html#us
 
 See [App.vue](./src/App.vue#L24)
 
+## Improve Developer Experience
+
+Reference: https://apollo.vuejs.org/guide/installation.html#visual-studio-code
+
+When using VS Code, it's recommended to install the [Apollo GraphQL Extension](https://marketplace.visualstudio.com/items?itemName=apollographql.vscode-apollo)
+
+Then create `apollo.config.js` in root directory of Vue project.
+
+<!-- prettier-ignore -->
+```js
+// apollo.config.js
+module.exports = {
+  client: {
+    service: {
+      name: 'my-app',
+      // URL to the GraphQL API
+      url: 'http://localhost:3000/graphql',
+    },
+    // Files processed by the extension
+    includes: [
+      'src/**/*.vue',
+      'src/**/*.js',
+      'src/**/*.ts',
+    ],
+  },
+}
+```
 ## How this project is created
 
 `npm create vue`
