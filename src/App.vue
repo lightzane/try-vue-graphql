@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EditRating from '@/components/EditRating.vue';
 import { ALL_BOOKS_QUERY } from '@/graphql';
 import { useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
@@ -6,6 +7,7 @@ import { computed, ref, watch } from 'vue';
 interface Book {
   id: string;
   title: string;
+  rating: number;
 }
 
 // const books = ref<Book[]>([]);
@@ -21,6 +23,7 @@ interface Book {
 //   });
 
 const searchTerm = ref('');
+const activeBook = ref<Book | null>(null);
 
 // IMPORTANT, we must inject DefaultApolloClient (@vue/apollo-composable)
 // See: main.ts
@@ -36,10 +39,10 @@ const { error, loading, result } = useQuery<{ books: Book[] }>(
     title: searchTerm.value,
   }),
   () => ({
-    debounce: 5000, // send only query (API calls) 500ms after user typing
+    debounce: 500, // send only query (API calls) 500ms after user typing
 
     // This field seems to be ignoring debounce
-    enabled: searchTerm.value.length > 2, // fire only when value is greater than 2
+    // enabled: searchTerm.value.length > 2, // fire only when value is greater than 2
   })
 );
 
@@ -55,8 +58,21 @@ const books = computed(() => result.value?.books ?? []);
     <input type="text" v-model="searchTerm" />
     <h2 v-if="loading">loading...</h2>
     <h3 v-else-if="error">Oops! Something went wrong</h3>
-    <p v-else v-for="book of books" :key="book.id">
-      {{ book.title }}
-    </p>
+    <template v-else>
+      <p v-if="activeBook">
+        Update "{{ activeBook.title }}" rating:
+        <EditRating
+          :initial-rating="activeBook.rating"
+          :book-id="activeBook.id"
+          @close-form="activeBook = null"
+        />
+      </p>
+      <template v-else>
+        <p v-for="book of books" :key="book.id">
+          {{ book.title }} - {{ book.rating }}
+          <button @click="activeBook = book">Edit Rating</button>
+        </p>
+      </template>
+    </template>
   </main>
 </template>
