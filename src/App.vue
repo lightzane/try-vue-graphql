@@ -20,9 +20,22 @@ const books = ref<Book[]>([]);
 //     books.value = res.data;
 //   });
 
+const searchTerm = ref('');
+
 // IMPORTANT, we must inject DefaultApolloClient (@vue/apollo-composable)
 // See: main.ts
-const { loading, result } = useQuery<{ books: Book[] }>(ALL_BOOKS_QUERY);
+// const { loading, result } = useQuery<{ books: Book[] }>(ALL_BOOKS_QUERY, { // NOT REACTIVE
+//   // books(title: $title) params
+//   title: 'the', // recommended for static searches
+// });
+const { error, loading, result } = useQuery<{ books: Book[] }>(
+  ALL_BOOKS_QUERY,
+  () => ({
+    // REACTIVE
+    // books(title: $title) params
+    title: searchTerm.value,
+  })
+);
 
 // Reference: https://apollo.vuejs.org/guide-composable/query.html#usequery
 watch(result, () => {
@@ -32,9 +45,10 @@ watch(result, () => {
 
 <template>
   <main>
+    <input type="text" v-model="searchTerm" />
     <h2 v-if="loading">loading...</h2>
-
-    <p v-for="book of books" :key="book.id">
+    <h3 v-else-if="error">Oops! Something went wrong</h3>
+    <p v-else v-for="book of books" :key="book.id">
       {{ book.title }}
     </p>
   </main>
