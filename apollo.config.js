@@ -1,11 +1,10 @@
 // apollo.config.js
-module.exports = {
+export default {
   client: {
     service: {
       name: 'my-app',
       // URL to the GraphQL API
-      // url: 'http://localhost:3000/graphql',
-      url: 'http://localhost:4000',
+      url: 'http://localhost:4000/graphql',
     },
     // Files processed by the extension
     includes: [

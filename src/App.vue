@@ -57,7 +57,10 @@ const books = computed(() => result.value?.books ?? []);
   <main>
     <input type="text" v-model="searchTerm" />
     <h2 v-if="loading">loading...</h2>
-    <h3 v-else-if="error">Oops! Something went wrong</h3>
+    <template v-else-if="error">
+      <h3>Oops! Something went wrong</h3>
+      <pre>{{ JSON.stringify(error, null, 2) }}</pre>
+    </template>
     <template v-else>
       <p v-if="activeBook">
         Update "{{ activeBook.title }}" rating:
