@@ -1,47 +1,41 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ALL_BOOKS_QUERY } from '@/graphql';
+import { useQuery } from '@vue/apollo-composable';
+import { onMounted, ref, watch } from 'vue';
+
+interface Book {
+  id: string;
+  title: string;
+}
+
+const books = ref<Book[]>([]);
+
+// ! This will not work since this does not have reactivity inside vue components
+
+// apolloClient
+//   .query({
+//     query: ALL_BOOKS_QUERY,
+//   })
+//   .then((res) => {
+//     books.value = res.data;
+//   });
+
+// IMPORTANT, we must inject DefaultApolloClient (@vue/apollo-composable)
+// See: main.ts
+const { loading, result } = useQuery<{ books: Book[] }>(ALL_BOOKS_QUERY);
+
+// Reference: https://apollo.vuejs.org/guide-composable/query.html#usequery
+watch(result, () => {
+  books.value = result.value?.books ?? [];
+});
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
   <main>
-    <TheWelcome />
+    <h2 v-if="loading">loading...</h2>
+
+    <p v-for="book of books" :key="book.id">
+      {{ book.title }}
+    </p>
   </main>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

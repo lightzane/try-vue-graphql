@@ -1,10 +1,78 @@
 # try-vue-graphql
 
-Learning Apollo Client with Vue app.
+Learning Apollo Client (https://www.apollographql.com/) with Vue app and Vue Apollo (https://apollo.vuejs.org/).
 
 Related course:
 
 https://www.vuemastery.com/courses/querying-with-graphql/fetching-data-with-queries
+
+## Installed Dependencies
+
+```bash
+npm install --save graphql graphql-tag @apollo/client @vue/apollo-composable
+```
+
+## Apollo Client Example
+
+### Outside Vue Components
+
+```ts
+// (graphql/index.ts)
+import gql from 'graphql-tag';
+
+export const ALL_BOOKS_QUERY = gql`
+  query GetAllBooks {
+    books {
+      id
+      title
+      description
+      rating
+      author
+      year
+    }
+  }
+`;
+```
+
+```ts
+import { ALL_BOOKS_QUERY } from '@/graphql';
+import {
+  ApolloClient,
+  createHttpLink,
+  InMemoryCache,
+} from '@apollo/client/core';
+
+const link = createHttpLink({
+  uri: 'http://localhost:4000',
+});
+
+export const apolloClient = new ApolloClient({
+  link,
+  cache: new InMemoryCache(),
+});
+
+apolloClient
+  .query({
+    query: ALL_BOOKS_QUERY,
+  })
+  .then((res) => {
+    console.log(res);
+  });
+```
+
+> **IMPORTANT**: For Vue, must import `@apollo/client` like so: `import { ApolloClient } from '@apollo/client/core'`
+
+### Inside Vue Components
+
+Reference: https://apollo.vuejs.org/guide-composable/setup.html#vue-3
+
+We must inject `DefaultApolloClient` from `@vue/apollo-composables`
+
+See [main.ts](./src/main.ts#L14)
+
+See also **useQuery()**: https://apollo.vuejs.org/guide-composable/query.html#usequery
+
+See [App.vue](./src/App.vue#L24)
 
 ## How this project is created
 
