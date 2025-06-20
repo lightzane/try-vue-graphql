@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ALL_BOOKS_QUERY } from '@/graphql';
 import { useQuery } from '@vue/apollo-composable';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Book {
   id: string;
   title: string;
 }
 
-const books = ref<Book[]>([]);
+// const books = ref<Book[]>([]);
 
 // ! This will not work since this does not have reactivity inside vue components
 
@@ -34,13 +34,20 @@ const { error, loading, result } = useQuery<{ books: Book[] }>(
     // REACTIVE
     // books(title: $title) params
     title: searchTerm.value,
+  }),
+  () => ({
+    debounce: 5000, // send only query (API calls) 500ms after user typing
+
+    // This field seems to be ignoring debounce
+    enabled: searchTerm.value.length > 2, // fire only when value is greater than 2
   })
 );
 
 // Reference: https://apollo.vuejs.org/guide-composable/query.html#usequery
-watch(result, () => {
-  books.value = result.value?.books ?? [];
-});
+// watch(result, () => {
+//   books.value = result.value?.books ?? [];
+// });
+const books = computed(() => result.value?.books ?? []);
 </script>
 
 <template>
