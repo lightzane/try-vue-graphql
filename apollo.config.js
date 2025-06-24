@@ -12,6 +12,7 @@ export default {
       // 'src/**/*.js',
       // 'src/**/*.ts', // ! merging different files might cause the extension to explode!
       'src/**/*.graphql',
+      'src/**/*.gql',
     ],
   },
 };

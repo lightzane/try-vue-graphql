@@ -3,12 +3,8 @@ import EditRating from '@/components/EditRating.vue';
 import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
 import { useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
-
-interface Book {
-  id: string;
-  title: string;
-  rating: number;
-}
+import AddBook from '@/components/AddBook.vue';
+import type { Book } from '@/types';
 
 // const books = ref<Book[]>([]);
 
@@ -24,6 +20,7 @@ interface Book {
 
 const searchTerm = ref('');
 const activeBook = ref<Book | null>(null);
+const showNewBookForm = ref(false);
 
 // IMPORTANT, we must inject DefaultApolloClient (@vue/apollo-composable)
 // See: main.ts
@@ -55,6 +52,16 @@ const books = computed(() => result.value?.books ?? []);
 
 <template>
   <main>
+    <section>
+      <button v-if="!showNewBookForm" @click="showNewBookForm = true">
+        Add a new book
+      </button>
+      <AddBook
+        v-else
+        :title="searchTerm"
+        @close-form="showNewBookForm = false"
+      />
+    </section>
     <input type="text" v-model="searchTerm" />
     <h2 v-if="loading">loading...</h2>
     <template v-else-if="error">
