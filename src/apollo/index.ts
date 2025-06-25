@@ -57,8 +57,30 @@ cache.writeQuery({
   },
 });
 
+const resolvers = {
+  Mutation: {
+    // @ts-expect-error TODO: find its types! The course is not focused on Typescript
+    favorite: (_, args, context) => {
+      const cache = context.cache;
+      const data = cache.readQuery({ query: FAVORITE_BOOKS_QUERY });
+
+      const newData = {
+        favoriteBooks: [...data.favoriteBooks, args.book],
+      };
+
+      cache.writeQuery({
+        query: FAVORITE_BOOKS_QUERY,
+        data: newData,
+      });
+
+      return newData.favoriteBooks;
+    },
+  },
+};
+
 export const apolloClient = new ApolloClient({
   link: splitLink,
   cache,
   typeDefs,
+  resolvers,
 });

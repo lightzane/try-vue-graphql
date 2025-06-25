@@ -3,7 +3,8 @@ import EditRating from '@/components/EditRating.vue';
 import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
 import BOOK_SUBSCRIPTION from './graphql/NewBook.subscription.graphql';
 import FAVORITE_BOOKS_QUERY from './graphql/local/FavoriteBooks.query.graphql';
-import { useQuery } from '@vue/apollo-composable';
+import FAVORITE_MUTATION from './graphql/local/Favorite.mutation.graphql';
+import { useQuery, useMutation } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
 import AddBook from '@/components/AddBook.vue';
 import type { Book } from '@/types';
@@ -80,6 +81,8 @@ const { result: favResult } = useQuery<{ favoriteBooks: Book[] }>(
 );
 
 const favoriteBooks = computed(() => favResult.value?.favoriteBooks ?? []);
+
+const { mutate: addFavorite } = useMutation(FAVORITE_MUTATION);
 </script>
 
 <template>
@@ -117,6 +120,7 @@ const favoriteBooks = computed(() => favResult.value?.favoriteBooks ?? []);
             <p v-for="book of books" :key="book.id">
               {{ book.title }} - {{ book.rating }}
               <button @click="activeBook = book">Edit Rating</button>
+              <button @click="addFavorite({ book })">Favorite</button>
             </p>
           </div>
 

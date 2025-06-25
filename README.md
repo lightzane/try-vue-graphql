@@ -133,7 +133,7 @@ const splitLink = split(
 
 Reference: https://www.apollographql.com/docs/react/data/subscriptions#4-provide-the-link-chain-to-apollo-client
 
-See [`src/apollo/index.ts`](./src/apollo/index.ts#L60)
+See [`src/apollo/index.ts`](./src/apollo/index.ts#L78)
 
 ```ts
 import { ApolloClient, InMemoryCache } from '@apollo/client/core'; // For Vue, must import from the `core` module
@@ -206,7 +206,7 @@ This step is _optional_ but **highly recommended** as it helps in tooling:
 - Autocomplete & validating
 - Generating Types (when using **Typescript**)
 
-See [`src/apollo/index.ts`](./src/apollo/index.ts#L63)
+See [`src/apollo/index.ts`](./src/apollo/index.ts#L81)
 
 ```diff
 +import typeDefs from './../graphql/local/typedefs.graphql';
