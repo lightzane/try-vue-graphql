@@ -4,14 +4,14 @@ import { useMutation } from '@vue/apollo-composable';
 import { ref } from 'vue';
 
 interface Props {
-  initialRating: number;
+  initialRating: number | null;
   bookId: string;
 }
 
 const emit = defineEmits(['closeForm']);
 const props = defineProps<Props>();
 
-const rating = ref(props.initialRating);
+const rating = ref(props.initialRating ?? 0);
 
 const { mutate, loading, onDone } = useMutation(UPDATE_RATING_MUTATION, () => ({
   variables: {

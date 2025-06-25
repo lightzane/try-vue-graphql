@@ -1,22 +1,17 @@
 <script setup lang="ts">
 import EditRating from '@/components/EditRating.vue';
 import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
+import BOOK_SUBSCRIPTION from './graphql/NewBook.subscription.graphql';
 import { useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
 import AddBook from '@/components/AddBook.vue';
 import type { Book } from '@/types';
 
-// const books = ref<Book[]>([]);
-
-// ! This will not work since this does not have reactivity inside vue components
-
-// apolloClient
-//   .query({
-//     query: ALL_BOOKS_QUERY,
-//   })
-//   .then((res) => {
-//     books.value = res.data;
-//   });
+/** The type of 'data' that will be returned as a response from the GraphQL Server */
+type QueryResults = {
+  books?: Book[];
+  bookSub?: Book;
+};
 
 const searchTerm = ref('');
 const activeBook = ref<Book | null>(null);
@@ -28,7 +23,7 @@ const showNewBookForm = ref(false);
 //   // books(title: $title) params
 //   title: 'the', // recommended for static searches
 // });
-const { error, loading, result } = useQuery<{ books: Book[] }>(
+const { error, loading, result, subscribeToMore } = useQuery<QueryResults>(
   ALL_BOOKS_QUERY,
   () => ({
     // REACTIVE
@@ -42,6 +37,36 @@ const { error, loading, result } = useQuery<{ books: Book[] }>(
     // enabled: searchTerm.value.length > 2, // fire only when value is greater than 2
   })
 );
+
+// ! [REQUIRES] Setup `http` and `ws` (see src/apollo/index.ts)
+subscribeToMore({
+  document: BOOK_SUBSCRIPTION,
+  updateQuery: (prev, newResult) => {
+    // Note: The GraphQL Server pushes the "bookSub" subscription whenever the book is added or updated
+    // console.log({ prev, newResult }); // observe the obj's structure / shape
+
+    const books = [...(prev.books ?? [])];
+    const bookSubResult = newResult.subscriptionData.data.bookSub as Book;
+
+    let isNew = true;
+
+    // Prevent duplicate since the GraphQL server pushes subscription on "bookSub" whenever a book is added or updated
+    books.forEach((book, index) => {
+      if (book.id === bookSubResult.id) {
+        isNew = false;
+        books[index] = bookSubResult;
+      }
+    });
+
+    // [NOTE] If you are already using cache.writeQuery(), duplication may happen
+    if (isNew) {
+      books.push(bookSubResult);
+    }
+
+    // Returns based on the typeof useQuery() which is QueryResults
+    return { books };
+  },
+});
 
 // Reference: https://apollo.vuejs.org/guide-composable/query.html#usequery
 // watch(result, () => {

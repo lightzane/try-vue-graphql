@@ -71,11 +71,13 @@ const { mutate, onDone } = useMutation(ADD_BOOK_MUTATION, () => ({
     };
 
     // 3️⃣ writeQuery()
-    cache.writeQuery({
-      data,
-      query: ALL_BOOKS_QUERY, // the query we want to modify
-      variables: { title: props.title },
-    });
+    // ! This became a duplicate since after Subscription of "bookSub" is implmented
+    // ! Since the server pushes real-time updates whenever a new book is added
+    // cache.writeQuery({
+    //   data,
+    //   query: ALL_BOOKS_QUERY, // the query we want to modify
+    //   variables: { title: props.title },
+    // });
   },
 
   // Sometimes we want to show the result of the mutation in the page
