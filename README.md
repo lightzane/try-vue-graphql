@@ -72,7 +72,7 @@ See [main.ts](./src/main.ts#L14)
 
 See also **useQuery()**: https://apollo.vuejs.org/guide-composable/query.html#usequery
 
-See [App.vue](./src/App.vue#L24)
+See [App.vue](./src/App.vue#L27)
 
 ### Subscription
 
@@ -133,7 +133,7 @@ const splitLink = split(
 
 Reference: https://www.apollographql.com/docs/react/data/subscriptions#4-provide-the-link-chain-to-apollo-client
 
-See [`src/apollo/index.ts`](./src/apollo/index.ts#L40)
+See [`src/apollo/index.ts`](./src/apollo/index.ts#L60)
 
 ```ts
 import { ApolloClient, InMemoryCache } from '@apollo/client/core'; // For Vue, must import from the `core` module
@@ -166,7 +166,7 @@ subscription BookSubscription {
 
 Invoke the `subscribeToMore()` from the `useQuery()`
 
-See usage at: [`App.vue`](./src/App.vue#L42)
+See usage at: [`App.vue`](./src/App.vue#L43)
 
 ```ts
 import BOOK_SUBSCRIPTION from './graphql/NewBook.subscription.graphql';
@@ -189,6 +189,74 @@ subscribeToMore({
     };
   },
 +});
+```
+
+## Local State in Apollo Client
+
+Commonly, the **schema** is defined in the **GraphQL Server**, but it can also be done in the client side when we want some data to be available _ONLY on the client-side_.
+
+### Create Schema Definition in local
+
+Create **typeDefs.graphql** and tell it to **Apollo Client**
+
+See: [`typedefs.graphql`](./src/graphql/local/typedefs.graphql)
+
+This step is _optional_ but **highly recommended** as it helps in tooling:
+
+- Autocomplete & validating
+- Generating Types (when using **Typescript**)
+
+See [`src/apollo/index.ts`](./src/apollo/index.ts#L63)
+
+```diff
++import typeDefs from './../graphql/local/typedefs.graphql';
+
+ ...
+
+ export const apolloClient = new ApolloClient({
+   ...,
++  cache,
++  typeDefs,
+ });
+```
+
+### Create Query in local
+
+See [`FavoriteBooks.query.graphql`](./src/graphql/local/FavoriteBooks.query.graphql)
+
+```gql
+#import './../BookFragment.graphql'
+
+query FavoriteBooks {
+  favoriteBooks @client {
+    ...BookFragment
+  }
+}
+```
+
+> Note: You may notice GraphQL Validation errors in the .graphql file as the definition does not exist in the GraphQL Server itself
+
+The `@client` directive tells the client to search only in the cache and not to send anything to the server.
+
+#### Add Initial State for the local (cache)
+
+```ts
+const cache = new InMemoryCache();
+
+// Write initial state for the cache
+cache.writeQuery({
+  query: FAVORITE_BOOKS_QUERY,
+  data: {
+    favoriteBooks: [
+      {
+        __typename: 'Book',
+        title: 'My Book',
+        id: 123,
+        rating: 5,
+      },
+    ],
+  },
+});
 ```
 
 ## Improve Developer Experience

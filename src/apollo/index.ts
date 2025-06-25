@@ -8,6 +8,9 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions'; // https://ww
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 
+import typeDefs from './../graphql/local/typedefs.graphql';
+import FAVORITE_BOOKS_QUERY from './../graphql/local/FavoriteBooks.query.graphql';
+
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql',
 });
@@ -37,7 +40,25 @@ const splitLink = split(
   httpLink // param 3
 );
 
+const cache = new InMemoryCache();
+
+// Write initial state for the cache
+cache.writeQuery({
+  query: FAVORITE_BOOKS_QUERY,
+  data: {
+    favoriteBooks: [
+      {
+        __typename: 'Book',
+        title: 'My Book',
+        id: 123,
+        rating: 5,
+      },
+    ],
+  },
+});
+
 export const apolloClient = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache(),
+  cache,
+  typeDefs,
 });

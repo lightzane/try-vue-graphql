@@ -2,6 +2,7 @@
 import EditRating from '@/components/EditRating.vue';
 import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
 import BOOK_SUBSCRIPTION from './graphql/NewBook.subscription.graphql';
+import FAVORITE_BOOKS_QUERY from './graphql/local/FavoriteBooks.query.graphql';
 import { useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
 import AddBook from '@/components/AddBook.vue';
@@ -73,6 +74,12 @@ subscribeToMore({
 //   books.value = result.value?.books ?? [];
 // });
 const books = computed(() => result.value?.books ?? []);
+
+const { result: favResult } = useQuery<{ favoriteBooks: Book[] }>(
+  FAVORITE_BOOKS_QUERY
+);
+
+const favoriteBooks = computed(() => favResult.value?.favoriteBooks ?? []);
 </script>
 
 <template>
@@ -103,11 +110,38 @@ const books = computed(() => result.value?.books ?? []);
         />
       </p>
       <template v-else>
-        <p v-for="book of books" :key="book.id">
-          {{ book.title }} - {{ book.rating }}
-          <button @click="activeBook = book">Edit Rating</button>
-        </p>
+        <div class="list-wrapper">
+          <!-- All Books -->
+          <div class="list">
+            <h3>All Books</h3>
+            <p v-for="book of books" :key="book.id">
+              {{ book.title }} - {{ book.rating }}
+              <button @click="activeBook = book">Edit Rating</button>
+            </p>
+          </div>
+
+          <!-- Favorite Books -->
+          <div class="list">
+            <h3>Favorite Books</h3>
+            <p v-for="book of favoriteBooks" :key="book.id">
+              {{ book.title }} - {{ book.rating }}
+              <button @click="activeBook = book">Edit Rating</button>
+            </p>
+          </div>
+        </div>
       </template>
     </template>
   </main>
 </template>
+
+<style scoped>
+.list-wrapper {
+  display: flex;
+  margin: 0 auto;
+  max-width: 960px;
+}
+
+.list {
+  width: 50%;
+}
+</style>
