@@ -1,0 +1,7 @@
+#import './BookFragment.graphql'
+
+query GetAllBooks($title: String) {
+  books(title: $title) {
+    ...BookFragment
+  }
+}

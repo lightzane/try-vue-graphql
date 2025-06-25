@@ -1,0 +1,7 @@
+#import './../BookFragment.graphql'
+
+mutation Favorite($book: Book!) {
+  favorite(book: $book) @client {
+    ...BookFragment
+  }
+}

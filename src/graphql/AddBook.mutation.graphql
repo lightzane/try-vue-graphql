@@ -1,0 +1,7 @@
+#import './BookFragment.graphql'
+
+mutation AddBook($input: BookInput!) {
+  addBook(input: $input) {
+    ...BookFragment
+  }
+}

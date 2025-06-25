@@ -1,0 +1,9 @@
+# This is a local graphql file available only in the client-side !
+
+extend type Query {
+  favoriteBooks: [Book!]
+}
+
+extend type Mutation {
+  favorite(book: Book!): [Book]
+}
