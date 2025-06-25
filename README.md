@@ -6,6 +6,10 @@ Related course:
 
 https://www.vuemastery.com/courses/querying-with-graphql/fetching-data-with-queries
 
+## GraphQL Server Pair
+
+See: https://github.com/lightzane/demo-graphql-server
+
 ## Installed Dependencies
 
 ```bash
@@ -60,7 +64,7 @@ apolloClient
   });
 ```
 
-> **IMPORTANT**: For Vue, must import `@apollo/client` like so: `import { ApolloClient } from '@apollo/client/core'`
+> **IMPORTANT**: For Vue, must import `@apollo/client` like so: `import { ApolloClient } from '@apollo/client/core'`. (See: [Apollo Blog](https://www.apollographql.com/blog/getting-started-with-vue-apollo#initial-vue-apollo-config))
 
 ### Inside Vue Components
 
