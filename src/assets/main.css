@@ -1,0 +1,5 @@
+@import './base.css';
+
+button {
+    font-family: var(--my-font-family);
+}
