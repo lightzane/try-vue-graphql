@@ -40,7 +40,46 @@ const splitLink = split(
   httpLink // param 3
 );
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  typePolicies: {
+    // Reference: https://www.apollographql.com/docs/react/caching/cache-configuration#typepolicy-fields
+    BookShelfLabel: {
+      // [TIP] Observe browser's network via devtools to see the `__typename`
+      // In this case, __typename: "BookShelfLabel"
+      keyFields: ['name'], // Be sure that `name` field is unique "globally"
+      // => This field prevents 'ghost-duplicates' in the cache
+      // Ghost duplicates = a term I made to describe the situation where the `id` is internally unique but not globally.
+      /*
+        By default, Apollo Client uses the `id` or `_id` field to identify objects in the cache.
+        But in this example, the GraphQL server has unique label `id` only within each book shelf:
+
+        ** Example **
+
+          bookShelves: [
+            {
+              id: 1,
+              labels: [
+                { id: 1, name: 'test1' },
+                { id: 2, name: 'test2' },
+              ]
+            },
+            {
+              id: 2,
+              labels: [
+                { id: 1, name: 'apple' },
+                { id: 2, name: 'banana' },
+              ]
+            },
+          ]
+
+        If keyFields: ['id'], then cache will only save the `id` 
+        thus, it may display as duplicates when rendering in view.
+
+        Try to comment out "keyFields" and see the results in view.
+      */
+    },
+  },
+});
 
 // Write initial state for the cache
 cache.writeQuery({

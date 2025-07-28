@@ -1,0 +1,10 @@
+query GetBookShelves {
+  bookShelves {
+    id
+    category
+    labels {
+      id
+      name
+    }
+  }
+}
