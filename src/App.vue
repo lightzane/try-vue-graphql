@@ -4,6 +4,7 @@ import ALL_BOOKS_QUERY from './graphql/GetAllBooks.query.graphql';
 import BOOK_SUBSCRIPTION from './graphql/NewBook.subscription.graphql';
 import FAVORITE_BOOKS_QUERY from './graphql/local/FavoriteBooks.query.graphql';
 import FAVORITE_MUTATION from './graphql/local/Favorite.mutation.graphql';
+import GET_BOOKSHELVES_QUERY from './graphql/BookShelves.query.graphql';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
 import AddBook from '@/components/AddBook.vue';
@@ -13,6 +14,14 @@ import type { Book } from '@/types';
 type QueryResults = {
   books?: Book[];
   bookSub?: Book;
+};
+
+type BookShelvesQueryResult = {
+  bookShelves: {
+    id: number;
+    category: string;
+    labels: { id: number; name: string }[];
+  }[];
 };
 
 const searchTerm = ref('');
@@ -83,6 +92,12 @@ const { result: favResult } = useQuery<{ favoriteBooks: Book[] }>(
 const favoriteBooks = computed(() => favResult.value?.favoriteBooks ?? []);
 
 const { mutate: addFavorite } = useMutation(FAVORITE_MUTATION);
+
+const { result: bookShelvesResult } = useQuery<BookShelvesQueryResult>(
+  GET_BOOKSHELVES_QUERY
+);
+
+const bookShelves = computed(() => bookShelvesResult.value?.bookShelves ?? []);
 </script>
 
 <template>
@@ -130,6 +145,23 @@ const { mutate: addFavorite } = useMutation(FAVORITE_MUTATION);
             <p v-for="book of favoriteBooks" :key="book.id">
               {{ book.title }} - {{ book.rating }}
               <button @click="activeBook = book">Edit Rating</button>
+            </p>
+          </div>
+
+          <!-- Book Shelves -->
+          <div class="list">
+            <h3>Book Shelves</h3>
+            <p>Demo <code>InMemoryCache</code> to prevent displaying duplicate data from cache</p>
+            <p v-for="shelf of bookShelves" :key="shelf.id">
+              {{ shelf.category }}
+              <ol>
+                <li
+                v-for="label of shelf.labels"
+                :key="`${label.id}-${label.name}`"
+              >
+                {{ label.name }}
+              </li>
+              </ol>
             </p>
           </div>
         </div>
