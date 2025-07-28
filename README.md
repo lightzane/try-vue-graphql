@@ -344,15 +344,6 @@ declare module '*.graphql' {
 }
 ```
 
-## Known Issues
-
-The VS Code extension along with the `apollo.config.js` is throwing the following error:
-
-```bash
-[Error - 11:29:33 AM] Server process exited with code 1.
-[Error - 11:29:33 AM] The Apollo GraphQL server crashed 5 times in the last 3 minutes. The server will not be restarted. See the output for more information.
-```
-
 ## How this project is created
 
 `npm create vue`

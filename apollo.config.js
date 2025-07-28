@@ -14,5 +14,8 @@ export default {
       'src/**/*.graphql',
       'src/**/*.gql',
     ],
+    excludes: [
+      'src/graphql/local/**'
+    ]
   },
 };
